@@ -24,6 +24,8 @@ import (
 	"k8s.io/cloud-provider-openstack/pkg/identity/keystone"
 	kflag "k8s.io/component-base/cli/flag"
 	"k8s.io/component-base/logs"
+	"net/http"
+	_ "net/http/pprof"
 )
 
 func main() {
@@ -62,5 +64,10 @@ func main() {
 		klog.Errorf("%v", err)
 		os.Exit(1)
 	}
+
+	go func() {
+		http.ListenAndServe("localhost:6060", nil)
+	}()
+
 	keystoneAuth.Run()
 }
